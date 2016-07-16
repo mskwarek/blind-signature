@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
-//using System.Numerics;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -27,16 +26,16 @@ namespace blind_sign
             m = new BigInteger(raw);
             //RsaKeyPairGenerator generator = new RsaKeyPairGenerator();
             //generator.Init(new KeyGenerationParameters(new SecureRandom(), 1024));
-          
-	        BigInteger s = null;
-           try {
+            
+	    BigInteger s = null;
+            try {
 	            
 	        
-            Console.WriteLine("\nm = " + m);
-            BigInteger e = pubKey.Exponent;
-            BigInteger d = privKey.Exponent;
-	        
-	        SecureRandom random = new SecureRandom();
+            	Console.WriteLine("\nm = " + m);
+            	BigInteger e = pubKey.Exponent;
+            	BigInteger d = privKey.Exponent;
+	       
+		SecureRandom random = new SecureRandom();
 	        byte [] randomBytes = new byte[10];
 	        BigInteger r = null;
 	        BigInteger n = pubKey.Modulus;
@@ -61,14 +60,14 @@ namespace blind_sign
 	        //********************* SIGN *************************************
 	        
 	        BigInteger bs = b.ModPow(d,n);
-            Console.WriteLine("bs = " + bs);
+           	Console.WriteLine("bs = " + bs);
 	        
 
 	        //********************* UNBLIND **********************************       
 	        s = ((r.ModInverse(n)).Multiply(bs)).Mod(n);
-            Console.WriteLine("s = " + s);
+            	Console.WriteLine("s = " + s);
 
-            return s; 
+            	return s; 
 	    }
 	    catch(Exception ex) {
 	        //System.out.println("ERROR Message: ");
@@ -116,19 +115,19 @@ namespace blind_sign
 	        //BOTH TESTS RETURN FALSE - s must not be a valid signature of m 
 	        
 	        //byte[] array =	check.ToByteArray();
-            //String str = System.Text.Encoding.ASCII.GetString(check.ToByteArray());
-            Console.WriteLine(System.Text.Encoding.ASCII.GetString(check.ToByteArray()));
+		//String str = System.Text.Encoding.ASCII.GetString(check.ToByteArray());
+            	Console.WriteLine(System.Text.Encoding.ASCII.GetString(check.ToByteArray()));
 	        Console.WriteLine("check = " +check);
-            Console.WriteLine("m = " + message.m);
-            string a = "";
-            Console.WriteLine(a);
-            Console.ReadLine();
+            	Console.WriteLine("m = " + message.m);
+            	string a = "";
+            	Console.WriteLine(a);
+            	Console.ReadLine();
 	    }
 	    catch(Exception ex) {
 	        //System.out.println("ERROR: ");
 	        //ex.printStackTrace();
-            Console.WriteLine("ERROR" + ex.StackTrace);
-            Console.ReadLine();
+            	Console.WriteLine("ERROR" + ex.StackTrace);
+            	Console.ReadLine();
 	    }
         }
     }
