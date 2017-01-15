@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>..\libs\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="crypto">
       <HintPath>..\..\..\..\..\Desktop\csharp\crypto\bin\Debug\crypto.dll</HintPath>
     </Reference>
