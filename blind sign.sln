@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "blind sign", "blind sign\blind sign.csproj", "{64E04AF9-F2E0-4A9F-A4A3-686B7C5E54B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlindSign", "blind sign\BlindSign.csproj", "{64E04AF9-F2E0-4A9F-A4A3-686B7C5E54B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlindSignatureUnitTests", "BlindSignatureUnitTests\BlindSignatureUnitTests.csproj", "{53D3C6EF-E1EE-493D-86BD-CC9AE88F1BF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{64E04AF9-F2E0-4A9F-A4A3-686B7C5E54B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64E04AF9-F2E0-4A9F-A4A3-686B7C5E54B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64E04AF9-F2E0-4A9F-A4A3-686B7C5E54B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53D3C6EF-E1EE-493D-86BD-CC9AE88F1BF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53D3C6EF-E1EE-493D-86BD-CC9AE88F1BF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53D3C6EF-E1EE-493D-86BD-CC9AE88F1BF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53D3C6EF-E1EE-493D-86BD-CC9AE88F1BF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
