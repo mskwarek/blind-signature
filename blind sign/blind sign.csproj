@@ -32,8 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\libs\BouncyCastle.Crypto.dll</HintPath>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="crypto">
       <HintPath>..\..\..\..\..\Desktop\csharp\crypto\bin\Debug\crypto.dll</HintPath>
@@ -48,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Message.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
