@@ -18,18 +18,20 @@ namespace BlindSign
     {
         public Message(string msg)
         {
-            KeyGenerationParameters para = new KeyGenerationParameters(new SecureRandom(), 1024);
-            //generate the RSA key pair
-            RsaKeyPairGenerator keyGen = new RsaKeyPairGenerator();
-            //initialise the KeyGenerator with a random number.
-            keyGen.Init(para);
-            AsymmetricCipherKeyPair keypair = keyGen.GenerateKeyPair();
-            this.PrivateKey = (RsaKeyParameters)keypair.Private;
-            this.PublicKey = (RsaKeyParameters)keypair.Public;
-
+            AsymmetricCipherKeyPair keyPair = this.GenerateKeyPair(1024);
+            this.PrivateKey = (RsaKeyParameters)keyPair.Private;
+            this.PublicKey = (RsaKeyParameters)keyPair.Public;
             this.message = msg;
+            this.randomBigInt = this.GenerateRandomRelativelyPrimeBigInteger();
+        }
 
-            this.GenerateRandomBigInteger();
+        private AsymmetricCipherKeyPair GenerateKeyPair(int bitStrength)
+        {
+            KeyGenerationParameters keyGenerationParameters = new KeyGenerationParameters(new SecureRandom(), bitStrength);
+            RsaKeyPairGenerator keyGen = new RsaKeyPairGenerator();
+
+            keyGen.Init(keyGenerationParameters);
+            return keyGen.GenerateKeyPair();
         }
 
         public String message
@@ -37,7 +39,7 @@ namespace BlindSign
             get;
         }
 
-        private BigInteger r;
+        private BigInteger randomBigInt;
 
         public RsaKeyParameters PublicKey
         {
@@ -64,75 +66,66 @@ namespace BlindSign
             return this.PublicKey.Exponent;
         }
 
-        private BigInteger GetRawMessage()
+        public BigInteger GetRawMessage()
         {
             byte[] raw = System.Text.Encoding.ASCII.GetBytes(message);
             return new BigInteger(raw);
         }
 
-        public BigInteger getMessage()
-        {
-
-            
-            return null;
-        }
-
         public BigInteger BlindMessage()
         {
-           //********************* BLIND ************************************
-
-            return ((r.ModPow(this.GetEFactor(), this.GetNFactor())).Multiply(this.GetRawMessage())).Mod(this.GetNFactor());         
+            return ((this.randomBigInt.ModPow(this.GetEFactor(), this.GetNFactor())).Multiply(this.GetRawMessage())).Mod(this.GetNFactor());         
         }
 
         public BigInteger SignBlindedMessage(BigInteger blindedMessage)
         {
-
-            //********************* SIGN *************************************
             return blindedMessage.ModPow(this.GetDFactor(), this.GetNFactor());
         }
 
         public BigInteger UnblindMessage(BigInteger bs)
-        {
-            //********************* UNBLIND **********************************       
-            return ((r.ModInverse(this.GetNFactor())).Multiply(bs)).Mod(this.GetNFactor());
+        {     
+            return ((this.randomBigInt.ModInverse(this.GetNFactor())).Multiply(bs)).Mod(this.GetNFactor());
         }
 
         public BigInteger GetMsgFromSignedData(BigInteger signed)
         {
-            //try to verify using the RSA formula
             return signed.ModPow(this.GetEFactor(), this.GetNFactor());
         }
 
         public bool VerifySignature(BigInteger unblinded)
-        {
-            //********************* VERIFY ***********************************
-            
+        { 
 	        //signature of m should = (m^d) mod n
 	        BigInteger sig_of_m = this.GetRawMessage().ModPow(this.GetDFactor(), this.GetNFactor());
-	        Console.WriteLine("sig_of_m = " + sig_of_m);
-	        
-	        //check that s is equal to a signature of m:
 	        return unblinded.Equals(sig_of_m);        
         }
 
-        private void GenerateRandomBigInteger()
+        private BigInteger GenerateRandomRelativelyPrimeBigInteger()
         {
-            BigInteger n = this.PublicKey.Modulus;
-            byte[] randomBytes = new byte[10];
-            SecureRandom random = new SecureRandom();
+            BigInteger tempRandomBigInt = new BigInteger("0");
 
-            BigInteger gcd = null;
-            BigInteger one = new BigInteger("1");
-
-            //check that gcd(r,n) = 1 && r < n && r > 1
             do
             {
-                random.NextBytes(randomBytes);
-                r = new BigInteger(1, randomBytes);
-                gcd = r.Gcd(n);
-                Console.WriteLine("gcd: " + gcd);
+                tempRandomBigInt = GenerateRandomBigInteger();
             }
-            while (!gcd.Equals(one) || r.CompareTo(n) >= 0 || r.CompareTo(one) <= 0);
+            while (this.AreRelativelyPrime(tempRandomBigInt, this.GetNFactor()));
+
+            return tempRandomBigInt;
+        }
+
+        private BigInteger GenerateRandomBigInteger()
+        {
+            byte[] randomBytes = new byte[20];
+            SecureRandom random = new SecureRandom();
+
+            random.NextBytes(randomBytes);
+            return new BigInteger(1, randomBytes);
+        }
+
+        private bool AreRelativelyPrime(BigInteger first, BigInteger second)
+        {
+            BigInteger one = new BigInteger("1");
+            BigInteger gcd = first.Gcd(second);
+            return (!gcd.Equals(one) || first.CompareTo(second) >= 0 || first.CompareTo(one) <= 0);
         }
     }
 }
