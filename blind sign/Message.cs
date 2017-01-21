@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Math;
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Signers;
-using Org.BouncyCastle.Crypto.Digests;
 
 namespace BlindSign
 {
@@ -37,13 +31,12 @@ namespace BlindSign
 
         public BigInteger GetRawMessage()
         {
-            byte[] raw = System.Text.Encoding.ASCII.GetBytes(message);
-            return new BigInteger(raw);
+            return new BigInteger(Encoding.ASCII.GetBytes(message));
         }
 
         public BigInteger BlindMessage()
         {
-            return ((this.randomBigInt.ModPow(this.GetEFactor(), this.GetNFactor())).Multiply(this.GetRawMessage())).Mod(this.GetNFactor());
+            return this.randomBigInt.ModPow(this.GetEFactor(), this.GetNFactor()).Multiply(this.GetRawMessage()).Mod(this.GetNFactor());
         }
 
         public BigInteger SignBlindedMessage(BigInteger blindedMessage)
@@ -53,7 +46,7 @@ namespace BlindSign
 
         public BigInteger UnblindMessage(BigInteger bs)
         {
-            return ((this.randomBigInt.ModInverse(this.GetNFactor())).Multiply(bs)).Mod(this.GetNFactor());
+            return this.randomBigInt.ModInverse(this.GetNFactor()).Multiply(bs).Mod(this.GetNFactor());
         }
 
         public BigInteger GetMsgFromSignedData(BigInteger signed)
@@ -126,7 +119,7 @@ namespace BlindSign
         {
             BigInteger one = new BigInteger("1");
             BigInteger gcd = first.Gcd(second);
-            return (!gcd.Equals(one) || first.CompareTo(second) >= 0 || first.CompareTo(one) <= 0);
+            return !gcd.Equals(one) || first.CompareTo(second) >= 0 || first.CompareTo(one) <= 0;
         }
     }
 }
