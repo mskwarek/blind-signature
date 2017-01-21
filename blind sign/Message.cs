@@ -25,6 +25,49 @@ namespace BlindSign
             this.randomBigInt = this.GenerateRandomRelativelyPrimeBigInteger();
         }
 
+        public String message
+        {
+            get;
+        }
+
+        public RsaKeyParameters PublicKey
+        {
+            get;
+        }
+
+        public BigInteger GetRawMessage()
+        {
+            byte[] raw = System.Text.Encoding.ASCII.GetBytes(message);
+            return new BigInteger(raw);
+        }
+
+        public BigInteger BlindMessage()
+        {
+            return ((this.randomBigInt.ModPow(this.GetEFactor(), this.GetNFactor())).Multiply(this.GetRawMessage())).Mod(this.GetNFactor());
+        }
+
+        public BigInteger SignBlindedMessage(BigInteger blindedMessage)
+        {
+            return blindedMessage.ModPow(this.GetDFactor(), this.GetNFactor());
+        }
+
+        public BigInteger UnblindMessage(BigInteger bs)
+        {
+            return ((this.randomBigInt.ModInverse(this.GetNFactor())).Multiply(bs)).Mod(this.GetNFactor());
+        }
+
+        public BigInteger GetMsgFromSignedData(BigInteger signed)
+        {
+            return signed.ModPow(this.GetEFactor(), this.GetNFactor());
+        }
+
+        public bool VerifySignature(BigInteger unblinded)
+        {
+            //signature of m should = (m^d) mod n
+            BigInteger sig_of_m = this.GetRawMessage().ModPow(this.GetDFactor(), this.GetNFactor());
+            return unblinded.Equals(sig_of_m);
+        }
+
         private AsymmetricCipherKeyPair GenerateKeyPair(int bitStrength)
         {
             KeyGenerationParameters keyGenerationParameters = new KeyGenerationParameters(new SecureRandom(), bitStrength);
@@ -34,19 +77,9 @@ namespace BlindSign
             return keyGen.GenerateKeyPair();
         }
 
-        public String message
-        {
-            get;
-        }
-
         private BigInteger randomBigInt;
 
-        public RsaKeyParameters PublicKey
-        {
-            get;
-        }
-
-        public RsaKeyParameters PrivateKey
+        private RsaKeyParameters PrivateKey
         {
             get;
         }
@@ -66,38 +99,6 @@ namespace BlindSign
             return this.PublicKey.Exponent;
         }
 
-        public BigInteger GetRawMessage()
-        {
-            byte[] raw = System.Text.Encoding.ASCII.GetBytes(message);
-            return new BigInteger(raw);
-        }
-
-        public BigInteger BlindMessage()
-        {
-            return ((this.randomBigInt.ModPow(this.GetEFactor(), this.GetNFactor())).Multiply(this.GetRawMessage())).Mod(this.GetNFactor());         
-        }
-
-        public BigInteger SignBlindedMessage(BigInteger blindedMessage)
-        {
-            return blindedMessage.ModPow(this.GetDFactor(), this.GetNFactor());
-        }
-
-        public BigInteger UnblindMessage(BigInteger bs)
-        {     
-            return ((this.randomBigInt.ModInverse(this.GetNFactor())).Multiply(bs)).Mod(this.GetNFactor());
-        }
-
-        public BigInteger GetMsgFromSignedData(BigInteger signed)
-        {
-            return signed.ModPow(this.GetEFactor(), this.GetNFactor());
-        }
-
-        public bool VerifySignature(BigInteger unblinded)
-        { 
-	        //signature of m should = (m^d) mod n
-	        BigInteger sig_of_m = this.GetRawMessage().ModPow(this.GetDFactor(), this.GetNFactor());
-	        return unblinded.Equals(sig_of_m);        
-        }
 
         private BigInteger GenerateRandomRelativelyPrimeBigInteger()
         {
